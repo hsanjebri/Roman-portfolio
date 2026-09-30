@@ -495,56 +495,9 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
 }
 
 /* ==========================================================================
-   Selected work
+   Selected work — category pills and the 3D ring
    ========================================================================== */
-.tabs {
-  position: relative;
-  display: flex;
-  gap: var(--s-6);
-  margin-bottom: var(--s-9);
-  border-bottom: 1px solid var(--line-dark);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.tab {
-  flex: none;
-  min-height: 44px;
-  padding-block: var(--s-3);
-  color: var(--stone);
-  transition: color .6s var(--ease);
-}
-.tab[aria-selected="true"], .tab:hover { color: var(--bone); }
-.tab sup { margin-left: var(--s-1); font-size: 9px; vertical-align: top; }
-.tabs__bar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 1px;
-  background: var(--rust);
-  transform-origin: left;
-  transition: transform .9s var(--ease), width .9s var(--ease);
-}
-
-.rows { display: flex; flex-direction: column; gap: var(--s-10); }
-.row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-8); }
-.row--bleed .plate { grid-column: 1 / -1; }
-.row--bleed .plate .media { width: 100vw; margin-left: calc(50% - 50vw); }
-.row--wide .plate { grid-column: 2 / span 10; }
-.row--pair .plate:nth-child(1) { grid-column: 1 / span 8; }
-.row--pair .plate:nth-child(2) { grid-column: 10 / -1; align-self: end; }
-.row--pair-rev .plate:nth-child(1) { grid-column: 5 / -1; grid-row: 1; }
-.row--pair-rev .plate:nth-child(2) { grid-column: 1 / span 3; grid-row: 1; align-self: start; margin-top: var(--s-10); }
-.row--single .plate { grid-column: 3 / span 7; }
-.row--single-portrait .plate { grid-column: 7 / span 4; }
-.row--single-portrait.is-left .plate { grid-column: 2 / span 4; }
-
-.plate__open { display: block; width: 100%; text-align: left; }
-.plate .media { transition: opacity .9s var(--ease), filter .9s var(--ease); }
-@media (hover: hover) {
-  .rows:has(.plate__open:hover) .plate:not(:has(.plate__open:hover)) .media { opacity: .6; filter: saturate(.55); }
-}
-
+/* Museum caption, shared with the lightbox and the featured strip. */
 .cap {
   display: grid;
   grid-template-columns: 7ch minmax(0, 1fr);
@@ -554,37 +507,100 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
 .cap__no { color: var(--stone); padding-top: 3px; }
 .cap__title { font-family: var(--serif); font-size: var(--fs-h4); font-style: italic; line-height: 1.15; }
 .cap__meta { margin-top: var(--s-1); color: var(--stone); }
-.row--bleed .cap { padding-inline: 0; }
-@media (hover: hover) and (pointer: fine) {
-  .cap__body { opacity: 0; transform: translateY(8px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
-  .plate:hover .cap__body, .plate:focus-within .cap__body { opacity: 1; transform: none; }
+.plate__open { display: block; width: 100%; text-align: left; }
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-8);
+}
+.pill {
+  min-height: 40px;
+  padding: 0 var(--s-5);
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  color: var(--stone);
+  transition: color .5s var(--ease), border-color .5s var(--ease), background-color .5s var(--ease);
+}
+.pill:hover { color: var(--bone); border-color: rgba(241, 237, 230, .45); }
+.pill[aria-selected="true"] { background: var(--bone); border-color: var(--bone); color: var(--night); }
+.pill sup { margin-left: var(--s-1); font-size: 9px; vertical-align: top; opacity: .7; }
+
+/* The stage holds the perspective; the ring inside it is what turns. */
+.ring__stage {
+  position: relative;
+  height: calc(var(--card-h) * 1.32);
+  perspective: 1200px;
+  perspective-origin: 50% 45%;
+  /* Horizontal drags spin the ring, vertical ones still scroll the page. */
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Full-bleed, so the ring is never clipped by the page gutter. */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+.ring__stage:active { cursor: grabbing; }
+
+.ring__spin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
-.gallery-swap { transition: opacity .6s var(--ease), transform .6s var(--ease); }
-.gallery-swap.is-out { opacity: 0; transform: translateY(16px); }
-
-@media (max-width: 1023px) {
-  .row--pair .plate:nth-child(1) { grid-column: 1 / span 7; }
-  .row--pair .plate:nth-child(2) { grid-column: 8 / -1; }
-  .row--pair-rev .plate:nth-child(1) { grid-column: 6 / -1; }
-  .row--pair-rev .plate:nth-child(2) { grid-column: 1 / span 5; margin-top: var(--s-9); }
-  .row--single .plate { grid-column: 2 / span 10; }
-  .row--single-portrait .plate { grid-column: 5 / span 7; }
-  .row--single-portrait.is-left .plate { grid-column: 2 / span 7; }
-  .rows { gap: var(--s-9); }
+/* Placement on the cylinder plus the depth shading, both set from script. */
+.ring__card {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  transform-style: preserve-3d;
 }
+/* The inner element carries the swap animation, so it never fights the
+   per-frame opacity the depth shading writes on the card itself. */
+.ring__inner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--c, var(--night-2));
+  background-image: var(--blur, none);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, .75);
+  will-change: transform, opacity;
+}
+.ring__card img { width: 100%; height: 100%; object-fit: cover; }
+.ring__card:focus-visible .ring__inner { outline: 2px solid var(--rust); outline-offset: 3px; }
+
+.ring__cap {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-1);
+  margin-top: var(--s-6);
+  min-height: 4.2em;
+  text-align: center;
+}
+.ring__cap .cap__no { padding-top: 0; }
+
 @media (max-width: 767px) {
-  .row .plate,
-  .row--pair .plate:nth-child(n),
-  .row--pair-rev .plate:nth-child(n),
-  .row--single .plate,
-  .row--single-portrait .plate,
-  .row--single-portrait.is-left .plate { grid-column: 1 / -1; grid-row: auto; margin-top: 0; }
-  .row--pair-rev .plate:nth-child(2),
-  .row--single-portrait .plate { grid-column: 3 / -1; }
-  .row { row-gap: var(--s-8); }
-  .rows { gap: var(--s-8); }
-  .tabs { gap: var(--s-5); margin-bottom: var(--s-8); }
+  .pills { gap: var(--s-1); margin-bottom: var(--s-7); }
+  .pill { padding: 0 var(--s-4); }
+  .ring__stage { height: calc(var(--card-h) * 1.42); perspective: 900px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring__stage { cursor: default; }
 }
 
 /* ==========================================================================
@@ -904,7 +920,6 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
 .cap__exif { display: block; margin-top: var(--s-1); color: var(--stone); font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: .06em; }
 .media { background-image: var(--blur, none); background-size: cover; background-position: center; }
 .media--empty { aspect-ratio: 4 / 5; background-color: var(--line); }
-.rows__empty { padding-block: var(--s-9); color: var(--stone); border-top: 1px solid var(--line-dark); }
 .section--bone .kicker,
 .page-plain .kicker,
 .section--bone .cap__no,

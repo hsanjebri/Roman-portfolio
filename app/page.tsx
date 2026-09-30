@@ -3,7 +3,7 @@ import Contact from "@/components/contact/Contact";
 import FeaturedSeries from "@/components/featured/FeaturedSeries";
 import Films from "@/components/films/Films";
 import Footer from "@/components/footer/Footer";
-import Gallery from "@/components/gallery/Gallery";
+import RingGallery from "@/components/gallery/RingGallery";
 import Hero from "@/components/hero/Hero";
 import Nav from "@/components/nav/Nav";
 import Preloader from "@/components/preloader/Preloader";
@@ -33,7 +33,7 @@ export default async function Home() {
                 Every image is a moment that <em>almost</em> didn&rsquo;t happen.
               </h2>
             </div>
-            <Gallery series={library.series} />
+            <RingGallery series={library.series} />
           </div>
         </section>
 
