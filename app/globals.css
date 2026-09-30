@@ -930,13 +930,17 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
   width: clamp(62px, 7vw, 112px);
   aspect-ratio: 1;
   pointer-events: none;
-  /* Ten-frame strip; the wingbeat is stepped from scroll, not a CSS timer. */
-  background: url("/bird-flight.webp") 0 0 / 1000% 100% no-repeat;
+  /* Eleven-cell strip (ten of flight, then perched); the wingbeat is stepped
+     from scroll, not a CSS timer. */
+  background: url("/bird-flight.webp") 0 0 / 1100% 100% no-repeat;
+  /* Stays out of the hero; the script turns it on once past it. */
+  opacity: 0;
   /* Just enough to sit the bird on the page, without smudging the light ground. */
   filter: drop-shadow(0 4px 9px rgba(12, 13, 13, .18));
   will-change: transform, background-position;
   transition: opacity .6s var(--ease);
 }
+.flybird.is-flying { opacity: 1; }
 html:not(.js) .flybird, .reduced .flybird { display: none; }
 /* Out of the way while a full-screen overlay is open. */
 html.is-locked .flybird { opacity: 0; }
