@@ -382,28 +382,32 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
   color: var(--ink);
 }
 
-/* Video fills the stage by height and stays 16:9, so the bird is never
-   cropped on wide screens; its edges feather into the sampled backdrop. */
-.hero__stage { position: relative; min-height: 0; }
+/* Full-bleed footage: the landing plays edge to edge. `cover` crops only the
+   axis the viewport doesn't match (nothing at all at 16:9), and the focal
+   point sits just above centre so the flight path survives short screens. */
 .hero__video {
   position: absolute;
-  top: 0;
-  left: 50%;
+  inset: 0;
   z-index: 0;
+  width: 100%;
   height: 100%;
-  width: auto;
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
-  transform: translateX(-50%);
   object-fit: cover;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%),
-    linear-gradient(0deg, transparent 0, #000 9%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%),
-    linear-gradient(0deg, transparent 0, #000 9%);
-  mask-composite: intersect;
+  object-position: center 46%;
+}
+
+/* Grid row 1 — a transparent replay target over the footage. */
+.hero__stage { position: relative; z-index: 2; min-height: 0; }
+
+/* Settles the twig and the left edge into the sampled backdrop, so the copy
+   reads without a box behind it. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--bg) 3%, color-mix(in srgb, var(--bg) 80%, transparent) 19%, transparent 50%),
+    linear-gradient(90deg, color-mix(in srgb, var(--bg) 70%, transparent) 0%, transparent 44%);
 }
 
 /* The trick: darken keeps the darker of word and video per pixel. The bird
@@ -482,6 +486,9 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
     min-height: 100svh;
     grid-template-rows: minmax(52svh, 1fr) auto;
   }
+  /* Footage keeps the top of the screen; the copy sits below it on solid ground. */
+  .hero__video { inset: 0 0 auto 0; height: 64svh; object-position: center 40%; }
+  .hero__scrim { background: linear-gradient(0deg, var(--bg) 36svh, transparent 64svh); }
   .hero__word { font-size: 19vw; } /* "Hawthorne" is 9 letters: 19vw keeps ~24px clear at 390 */
   .hero__band { padding-bottom: var(--s-6); }
   .hero__copy, .hlabel { grid-column: 1 / -1; }
@@ -911,6 +918,45 @@ html[data-tone="dark"] .nav .btn:hover span { color: var(--ink); }
 .film__media .reveal__inner { height: 100%; }
 .number { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
 .number__value { margin: 0; }
+
+/* ==========================================================================
+   Flying bird — scroll-driven, one crossing per section
+   ========================================================================== */
+.flybird {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: clamp(38px, 4.8vw, 68px);
+  aspect-ratio: 92 / 60;
+  pointer-events: none;
+  opacity: .5;
+  color: var(--ink);
+  /* A halo in the opposite tone, so the silhouette still separates when it
+     crosses a photograph rather than flat ground. */
+  filter: drop-shadow(0 1px 5px rgba(241, 237, 230, .65));
+  will-change: transform;
+  transition: opacity .6s var(--ease), color .6s var(--ease), filter .6s var(--ease);
+}
+html[data-tone="dark"] .flybird {
+  color: var(--bone);
+  opacity: .62;
+  filter: drop-shadow(0 1px 6px rgba(12, 13, 13, .8));
+}
+html:not(.js) .flybird, .reduced .flybird { display: none; }
+/* Out of the way while a full-screen overlay is open. */
+html.is-locked .flybird { opacity: 0; }
+
+.flybird__wings {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: flap 1.05s cubic-bezier(.45, 0, .5, 1) infinite alternate;
+}
+/* Never flattens all the way — at full compression the shape stops reading as a bird. */
+@keyframes flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(.56); }
+}
 
 /* ==========================================================================
    Cursor (desktop only)

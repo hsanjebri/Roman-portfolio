@@ -3,6 +3,7 @@ import { Bodoni_Moda, Hanken_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import Cursor from "@/components/cursor/Cursor";
+import FlyingBird from "@/components/motion/FlyingBird";
 import MotionRoot from "@/components/motion/MotionRoot";
 import { INTRO_STORAGE_KEY } from "@/lib/intro";
 
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         {children}
+        <FlyingBird />
         <Cursor />
         <MotionRoot />
         <div className="grain" aria-hidden="true" />

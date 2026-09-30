@@ -157,24 +157,30 @@ export default function Hero() {
 
   return (
     <section className={heroClass} id="top" aria-labelledby="hero-title" data-bg="hero">
-      <div className="hero__stage" data-cursor="replay" onClick={replay} aria-hidden="true">
-        <video
-          ref={videoRef}
-          className="hero__video"
-          src={VIDEO_SRC}
-          poster={VIDEO_POSTER}
-          crossOrigin={VIDEO_CORS ? "anonymous" : undefined}
-          muted
-          playsInline
-          preload="auto"
-          tabIndex={-1}
-          data-hero-video
-        />
-      </div>
+      <video
+        ref={videoRef}
+        className="hero__video"
+        src={VIDEO_SRC}
+        poster={VIDEO_POSTER}
+        crossOrigin={VIDEO_CORS ? "anonymous" : undefined}
+        muted
+        playsInline
+        preload="auto"
+        tabIndex={-1}
+        aria-hidden="true"
+        data-hero-video
+      />
 
       <p className="hero__word" aria-hidden="true">
         Haw<em>thorne</em>
       </p>
+
+      {/* Fades the twig and the frame edges into the sampled backdrop so the
+          copy stays legible over full-bleed footage. */}
+      <div className="hero__scrim" aria-hidden="true" />
+
+      {/* Click anywhere on the footage to replay; the band below stays live. */}
+      <div className="hero__stage" data-cursor="replay" onClick={replay} aria-hidden="true" />
 
       <div className="hero__band">
         <div className="wrap">
